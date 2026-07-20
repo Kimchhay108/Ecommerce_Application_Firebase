@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "502799509485",
+    "project_id": "ecommerce-application-f37f9",
+    "storage_bucket": "ecommerce-application-f37f9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502799509485:android:9b0ac3048588476b61a9e4",
+        "android_client_info": {
+          "package_name": "com.example.ecommerce_flutter_laravel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEE4-YZqE_JW3QwKx42IBggNmxu9-RLgc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
