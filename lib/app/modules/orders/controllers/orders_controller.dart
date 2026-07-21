@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import '../../../data/models/cart_item_model.dart';
 import '../../../data/models/order_model.dart';
+import '../../../data/models/product_model.dart';
 
 class OrdersController extends GetxController {
   // Available status filters
@@ -14,27 +16,90 @@ class OrdersController extends GetxController {
   // Active filter state
   final RxString activeFilter = 'Processing'.obs;
 
-  // Master list of all orders
-  final RxList<OrderModel> allOrders = <OrderModel>[
-    // Processing Orders
-    const OrderModel(id: '1', code: '#456765', itemCount: 4, status: 'Processing'),
-    const OrderModel(id: '2', code: '#454569', itemCount: 2, status: 'Processing'),
-    const OrderModel(id: '3', code: '#454809', itemCount: 1, status: 'Processing'),
-    
-    // Shipped Orders
-    const OrderModel(id: '4', code: '#441920', itemCount: 3, status: 'Shipped'),
-    const OrderModel(id: '5', code: '#439281', itemCount: 5, status: 'Shipped'),
+  // Master reactive list of all orders
+  final RxList<OrderModel> allOrders = <OrderModel>[].obs;
 
-    // Delivered Orders
-    const OrderModel(id: '6', code: '#412982', itemCount: 2, status: 'Delivered'),
-    const OrderModel(id: '7', code: '#409281', itemCount: 1, status: 'Delivered'),
+  @override
+  void onInit() {
+    super.onInit();
+    _loadInitialOrders();
+  }
 
-    // Returned Orders
-    const OrderModel(id: '8', code: '#392812', itemCount: 1, status: 'Returned'),
+  void _loadInitialOrders() {
+    if (allOrders.isNotEmpty) return;
 
-    // Canceled Orders
-    const OrderModel(id: '9', code: '#381283', itemCount: 2, status: 'Canceled'),
-  ].obs;
+    final sampleProduct1 = const ProductModel(
+      id: 'p1',
+      title: "Men's Fleece Hooded Sweatshirt",
+      imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500',
+      price: 100.0,
+    );
+
+    final sampleProduct2 = const ProductModel(
+      id: 'p2',
+      title: 'Fleece Pullover Skate Hoodie',
+      imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=500',
+      price: 148.0,
+    );
+
+    allOrders.assignAll([
+      OrderModel(
+        id: 'ord_sample_1',
+        code: '#456765',
+        date: DateTime.now().subtract(const Duration(hours: 3)),
+        items: [
+          CartItemModel(product: sampleProduct1, selectedSize: 'M', selectedColor: 'Black', quantity: 2),
+          CartItemModel(product: sampleProduct2, selectedSize: 'L', selectedColor: 'Grey', quantity: 1),
+        ],
+        status: 'Processing',
+        shippingAddress: '2715 Ash Dr. San Jose, South Dakota 83475',
+        paymentMethod: '**** 4187',
+        subtotal: 348.0,
+        discount: 0.0,
+        shippingCost: 8.0,
+        tax: 0.0,
+        total: 356.0,
+      ),
+      OrderModel(
+        id: 'ord_sample_2',
+        code: '#441920',
+        date: DateTime.now().subtract(const Duration(days: 2)),
+        items: [
+          CartItemModel(product: sampleProduct2, selectedSize: 'S', selectedColor: 'Red', quantity: 1),
+        ],
+        status: 'Shipped',
+        shippingAddress: '123 Main St, Springfield, IL 62701',
+        paymentMethod: '**** 9821',
+        subtotal: 148.0,
+        discount: 14.8,
+        shippingCost: 8.0,
+        tax: 0.0,
+        total: 141.2,
+      ),
+      OrderModel(
+        id: 'ord_sample_3',
+        code: '#412982',
+        date: DateTime.now().subtract(const Duration(days: 5)),
+        items: [
+          CartItemModel(product: sampleProduct1, selectedSize: 'XL', selectedColor: 'Blue', quantity: 1),
+        ],
+        status: 'Delivered',
+        shippingAddress: '2715 Ash Dr. San Jose, South Dakota 83475',
+        paymentMethod: '**** 4187',
+        subtotal: 100.0,
+        discount: 0.0,
+        shippingCost: 8.0,
+        tax: 0.0,
+        total: 108.0,
+      ),
+    ]);
+  }
+
+  // Add a newly placed order to top of list
+  void addOrder(OrderModel order) {
+    allOrders.insert(0, order);
+    activeFilter.value = order.status; // Switch filter to see newly placed order
+  }
 
   // Getter to retrieve filtered list of orders
   List<OrderModel> get filteredOrders {
@@ -46,4 +111,3 @@ class OrdersController extends GetxController {
     activeFilter.value = filter;
   }
 }
-

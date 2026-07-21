@@ -18,33 +18,8 @@ class HomeController extends GetxController {
   final RxList<String> favoritedProductIds = <String>[].obs;
   final RxInt cartItemCount = 0.obs;
 
-  // Reactive Cart items list initialized with the two mock items from Figma design
-  final RxList<CartItemModel> cartItems = <CartItemModel>[
-    CartItemModel(
-      product: const ProductModel(
-        id: 'ts_1',
-        title: "Men's Harrington Jacket",
-        imageUrl: 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=150',
-        price: 148.0,
-        category: "Men's Clothing",
-      ),
-      selectedSize: 'M',
-      selectedColor: 'Lemon',
-      quantity: 1,
-    ),
-    CartItemModel(
-      product: const ProductModel(
-        id: 'ts_2',
-        title: "Men's Coaches Jacket",
-        imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=150',
-        price: 52.0,
-        category: "Men's Clothing",
-      ),
-      selectedSize: 'M',
-      selectedColor: 'Black',
-      quantity: 1,
-    ),
-  ].obs;
+  // Reactive Cart items list initialized empty
+  final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
 
   @override
   void onInit() {
@@ -57,7 +32,7 @@ class HomeController extends GetxController {
     fetchData();
   }
 
-  // Fetch data from provider
+  // Fetch data from provider with silent fallback
   Future<void> fetchData() async {
     try {
       isLoading.value = true;
@@ -65,13 +40,64 @@ class HomeController extends GetxController {
       final fetchedTopSelling = await _apiProvider.getTopSellingProducts();
       final fetchedNewIn = await _apiProvider.getNewInProducts();
 
-      categories.assignAll(fetchedCategories);
-      topSelling.assignAll(fetchedTopSelling);
-      newIn.assignAll(fetchedNewIn);
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to load products: $e');
+      if (fetchedCategories.isNotEmpty) categories.assignAll(fetchedCategories);
+      if (fetchedTopSelling.isNotEmpty) topSelling.assignAll(fetchedTopSelling);
+      if (fetchedNewIn.isNotEmpty) newIn.assignAll(fetchedNewIn);
+    } catch (_) {
+      // Load offline fallback data silently without popping error snackbar
+      _loadFallbackData();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void _loadFallbackData() {
+    if (categories.isEmpty) {
+      categories.assignAll(const [
+        CategoryModel(id: 'c1', title: 'Hoodies', imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=150'),
+        CategoryModel(id: 'c2', title: 'Jackets', imageUrl: 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=150'),
+        CategoryModel(id: 'c3', title: 'Shoes', imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=150'),
+        CategoryModel(id: 'c4', title: 'Accessories', imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=150'),
+      ]);
+    }
+
+    if (topSelling.isEmpty) {
+      topSelling.assignAll(const [
+        ProductModel(
+          id: 'ts_1',
+          title: "Men's Harrington Jacket",
+          imageUrl: 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=300',
+          price: 148.0,
+          originalPrice: 198.0,
+          category: "Men's Clothing",
+        ),
+        ProductModel(
+          id: 'ts_2',
+          title: "Men's Coaches Jacket",
+          imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300',
+          price: 52.0,
+          category: "Men's Clothing",
+        ),
+      ]);
+    }
+
+    if (newIn.isEmpty) {
+      newIn.assignAll(const [
+        ProductModel(
+          id: 'ni_1',
+          title: "Max90 Unisex T-Shirt",
+          imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300',
+          price: 35.0,
+          category: "Men's Clothing",
+        ),
+        ProductModel(
+          id: 'ni_2',
+          title: "Fleece Pullover Hoodie",
+          imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=300',
+          price: 78.0,
+          category: "Men's Clothing",
+        ),
+      ]);
     }
   }
 
@@ -128,27 +154,6 @@ class HomeController extends GetxController {
   // Clear all items from cart
   void clearCart() {
     cartItems.clear();
-  }
-
-  // Fallback for simple cart additions
-  void incrementCart() {
-    addToCart(
-      const ProductModel(
-        id: 'ts_1',
-        title: "Men's Harrington Jacket",
-        imageUrl: 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=150',
-        price: 148.0,
-      ),
-      'M',
-      'Lemon',
-      1,
-    );
-    Get.snackbar(
-      'Cart Updated',
-      'An item has been added to your shopping bag!',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 1),
-    );
+    cartItemCount.value = 0;
   }
 }
-

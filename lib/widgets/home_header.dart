@@ -3,9 +3,7 @@ import '../app/theme/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
   final String profileImageUrl;
-  final String selectedGender;
   final VoidCallback? onProfileTap;
-  final VoidCallback? onGenderTap;
   final VoidCallback? onNotificationTap;
   final VoidCallback? onCartTap;
   final int notificationCount;
@@ -14,9 +12,7 @@ class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
     required this.profileImageUrl,
-    required this.selectedGender,
     this.onProfileTap,
-    this.onGenderTap,
     this.onNotificationTap,
     this.onCartTap,
     this.notificationCount = 0,
@@ -41,36 +37,6 @@ class HomeHeader extends StatelessWidget {
                 image: NetworkImage(profileImageUrl),
                 fit: BoxFit.cover,
               ),
-            ),
-          ),
-        ),
-        // Gender Selector Dropdown
-        GestureDetector(
-          onTap: onGenderTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppTheme.surfaceColor,
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  selectedGender,
-                  style: const TextStyle(
-                    color: AppTheme.textPrimaryColor,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: AppTheme.textPrimaryColor,
-                  size: 16,
-                ),
-              ],
             ),
           ),
         ),

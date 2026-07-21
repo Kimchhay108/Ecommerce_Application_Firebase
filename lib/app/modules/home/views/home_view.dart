@@ -63,10 +63,8 @@ class HomeView extends GetView<HomeController> {
               Obx(() => HomeHeader(
                     profileImageUrl:
                         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-                    selectedGender: controller.selectedGender.value,
                     notificationCount: 4, // Mock notifications count
                     cartCount: controller.cartItemCount.value,
-                    onGenderTap: controller.toggleGender,
                     onNotificationTap: () => Get.toNamed(Routes.NOTIFICATIONS),
                     onCartTap: () => Get.toNamed(Routes.CART),
                   )),

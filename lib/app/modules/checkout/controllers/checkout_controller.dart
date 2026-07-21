@@ -1,8 +1,12 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../data/models/cart_item_model.dart';
+import '../../../data/models/order_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../cart/controllers/cart_controller.dart';
 import '../../home/controllers/home_controller.dart';
+import '../../orders/controllers/orders_controller.dart';
 
 class CheckoutController extends GetxController {
   final CartController cartController = Get.find<CartController>();
@@ -43,12 +47,24 @@ class CheckoutController extends GetxController {
 
   // Checkout and place order validation
   void placeOrder() {
+    if (cartController.cartItems.isEmpty) {
+      Get.snackbar(
+        'Empty Cart',
+        'Your cart is empty. Add items before checking out.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+      );
+      return;
+    }
+
     if (shippingAddress.value == 'Add Shipping Address') {
       Get.snackbar(
         'Address Required',
         'Please add a shipping address before placing your order.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        backgroundColor: Colors.redAccent,
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),
       );
@@ -60,15 +76,53 @@ class CheckoutController extends GetxController {
         'Payment Required',
         'Please add a payment method before placing your order.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        backgroundColor: Colors.redAccent,
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),
       );
       return;
     }
 
-    // Process order: Clear cart and transition to success screen
+    // Capture snapshot of current cart items
+    final cartItemsSnapshot = cartController.cartItems
+        .map((item) => CartItemModel(
+              product: item.product,
+              selectedSize: item.selectedSize,
+              selectedColor: item.selectedColor,
+              quantity: item.quantity,
+            ))
+        .toList();
+
+    // Generate random 6-digit order code
+    final orderCode = '#${100000 + Random().nextInt(899999)}';
+
+    // Construct OrderModel
+    final newOrder = OrderModel(
+      id: 'ord_${DateTime.now().millisecondsSinceEpoch}',
+      code: orderCode,
+      date: DateTime.now(),
+      items: cartItemsSnapshot,
+      status: 'Processing',
+      shippingAddress: shippingAddress.value,
+      paymentMethod: paymentMethod.value,
+      subtotal: subtotal,
+      discount: discount,
+      shippingCost: shippingCost,
+      tax: tax,
+      total: total,
+    );
+
+    // Save to OrdersController state
+    final OrdersController ordersController = Get.isRegistered<OrdersController>()
+        ? Get.find<OrdersController>()
+        : Get.put(OrdersController(), permanent: true);
+    ordersController.addOrder(newOrder);
+
+    // Completely clear all cart items and state
     cartController.clearAll();
-    Get.toNamed(Routes.ORDER_SUCCESS);
+    homeController.clearCart();
+
+    // Transition to order success screen
+    Get.toNamed(Routes.ORDER_SUCCESS, arguments: newOrder);
   }
 }

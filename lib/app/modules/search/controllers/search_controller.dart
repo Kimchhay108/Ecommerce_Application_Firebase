@@ -166,6 +166,6 @@ class SearchController extends GetxController {
 
   // Sync Cart
   void addToCart(ProductModel product) {
-    _homeController?.incrementCart();
+    _homeController?.addToCart(product, 'M', 'Black', 1);
   }
 }
