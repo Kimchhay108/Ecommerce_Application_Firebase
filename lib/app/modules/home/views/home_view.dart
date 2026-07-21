@@ -59,18 +59,17 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Home Header
+
               Obx(() => HomeHeader(
                     profileImageUrl:
                         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-                    notificationCount: 4, // Mock notifications count
+                    notificationCount: 4,
                     cartCount: controller.cartItemCount.value,
                     onNotificationTap: () => Get.toNamed(Routes.NOTIFICATIONS),
                     onCartTap: () => Get.toNamed(Routes.CART),
                   )),
               const SizedBox(height: 24),
 
-              // Search Bar
               CustomSearchBar(
                 hintText: 'Search',
                 readOnly: true,
@@ -78,7 +77,6 @@ class HomeView extends GetView<HomeController> {
               ),
               const SizedBox(height: 24),
 
-              // Categories Section
               const SectionHeader(title: 'Categories'),
               const SizedBox(height: 16),
               SizedBox(
@@ -100,7 +98,6 @@ class HomeView extends GetView<HomeController> {
               ),
               const SizedBox(height: 24),
 
-              // Top Selling Section
               const SectionHeader(title: 'Top Selling'),
               const SizedBox(height: 16),
               SizedBox(
@@ -129,7 +126,6 @@ class HomeView extends GetView<HomeController> {
               ),
               const SizedBox(height: 24),
 
-              // New In Section
               const SectionHeader(title: 'New In'),
               const SizedBox(height: 16),
               SizedBox(

@@ -6,7 +6,6 @@ import '../controllers/checkout_controller.dart';
 class CheckoutView extends GetView<CheckoutController> {
   const CheckoutView({super.key});
 
-  // Custom Bottom Sheet for Address Selection
   void _showAddressBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
@@ -32,7 +31,7 @@ class CheckoutView extends GetView<CheckoutController> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Preset Option 1
+
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.home_outlined, color: AppTheme.primaryColor),
@@ -44,7 +43,7 @@ class CheckoutView extends GetView<CheckoutController> {
                 },
               ),
               const Divider(color: AppTheme.surfaceColor),
-              // Preset Option 2
+
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.business_outlined, color: AppTheme.primaryColor),
@@ -66,7 +65,7 @@ class CheckoutView extends GetView<CheckoutController> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Text Field for custom address
+
               Container(
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceColor,
@@ -85,7 +84,7 @@ class CheckoutView extends GetView<CheckoutController> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Save button
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -112,7 +111,6 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  // Custom Bottom Sheet for Payment Selection
   void _showPaymentBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
@@ -137,8 +135,7 @@ class CheckoutView extends GetView<CheckoutController> {
               ),
             ),
             const SizedBox(height: 16),
-            // Visa ending in 4242
-            // Mastercard preset option (from mockup)
+
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.credit_card_outlined, color: AppTheme.primaryColor),
@@ -150,7 +147,7 @@ class CheckoutView extends GetView<CheckoutController> {
               },
             ),
             const Divider(color: AppTheme.surfaceColor),
-            // PayPal
+
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.payment_outlined, color: AppTheme.primaryColor),
@@ -162,7 +159,7 @@ class CheckoutView extends GetView<CheckoutController> {
               },
             ),
             const Divider(color: AppTheme.surfaceColor),
-            // Cash on Delivery
+
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.monetization_on_outlined, color: AppTheme.primaryColor),
@@ -191,7 +188,7 @@ class CheckoutView extends GetView<CheckoutController> {
             width: 16,
             height: 16,
             decoration: const BoxDecoration(
-              color: Color(0xFFFA3636), // Mastercard Red
+              color: Color(0xFFFA3636),
               shape: BoxShape.circle,
             ),
           ),
@@ -201,7 +198,7 @@ class CheckoutView extends GetView<CheckoutController> {
               width: 16,
               height: 16,
               decoration: const BoxDecoration(
-                color: Color(0xFFF4BD2F), // Mastercard Yellow/Orange
+                color: Color(0xFFF4BD2F),
                 shape: BoxShape.circle,
               ),
             ),
@@ -219,7 +216,7 @@ class CheckoutView extends GetView<CheckoutController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Custom Header Bar
+
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 8),
               child: Row(
@@ -250,19 +247,18 @@ class CheckoutView extends GetView<CheckoutController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 40), // Spacer balancing back button
+                  const SizedBox(width: 40),
                 ],
               ),
             ),
 
-            // Main Details
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   children: [
-                    // Shipping Address Card
+
                     GestureDetector(
                       onTap: () => _showAddressBottomSheet(context),
                       behavior: HitTestBehavior.opaque,
@@ -311,7 +307,6 @@ class CheckoutView extends GetView<CheckoutController> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Payment Method Card
                     GestureDetector(
                       onTap: () => _showPaymentBottomSheet(context),
                       behavior: HitTestBehavior.opaque,
@@ -373,7 +368,6 @@ class CheckoutView extends GetView<CheckoutController> {
                     ),
                     const SizedBox(height: 40),
 
-                    // Pricing breakdown section
                     Column(
                       children: [
                         _buildPriceRow('Subtotal', '\$${controller.subtotal.toStringAsFixed(2)}'),

@@ -78,8 +78,7 @@ class OnboardingView extends GetView<OnboardingController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 80),
-              
-              // Title
+
               const Text(
                 'Tell us About yourself',
                 style: TextStyle(
@@ -90,7 +89,6 @@ class OnboardingView extends GetView<OnboardingController> {
               ),
               const SizedBox(height: 48),
 
-              // Question 1: Shop for
               const Text(
                 'Who do you shop for ?',
                 style: TextStyle(
@@ -100,8 +98,7 @@ class OnboardingView extends GetView<OnboardingController> {
                 ),
               ),
               const SizedBox(height: 16),
-              
-              // Men & Women Toggle Row
+
               Obx(() {
                 final isMen = controller.selectedGender.value == 'Men';
                 return Row(
@@ -156,7 +153,6 @@ class OnboardingView extends GetView<OnboardingController> {
               }),
               const SizedBox(height: 48),
 
-              // Question 2: Age range
               const Text(
                 'How Old are you ?',
                 style: TextStyle(
@@ -167,7 +163,6 @@ class OnboardingView extends GetView<OnboardingController> {
               ),
               const SizedBox(height: 16),
 
-              // Age Range Dropdown/Selector Button
               GestureDetector(
                 onTap: () => _showAgeRangeBottomSheet(context),
                 behavior: HitTestBehavior.opaque,
@@ -200,7 +195,6 @@ class OnboardingView extends GetView<OnboardingController> {
               ),
               const SizedBox(height: 120),
 
-              // Finish Button
               Obx(() => GestureDetector(
                 onTap: controller.isLoading.value ? null : controller.finishOnboarding,
                 behavior: HitTestBehavior.opaque,

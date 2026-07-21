@@ -11,11 +11,11 @@ class OrderSuccessView extends GetView<OrderSuccessController> {
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       body: SafeArea(
-        top: false, // Allow background color to bleed to status bar
-        bottom: false, // Allow light grey card to bleed to navigation bar
+        top: false,
+        bottom: false,
         child: Column(
           children: [
-            // Top Section (Vibrant purple hosting 3D illustration)
+
             Expanded(
               flex: 55,
               child: Center(
@@ -35,13 +35,12 @@ class OrderSuccessView extends GetView<OrderSuccessController> {
               ),
             ),
 
-            // Bottom Section (Light grey card with rounded corners containing details)
             Expanded(
               flex: 45,
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                  color: AppTheme.surfaceColor, // Light surface grey (F4F4F4)
+                  color: AppTheme.surfaceColor,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
@@ -56,7 +55,7 @@ class OrderSuccessView extends GetView<OrderSuccessController> {
                 child: Column(
                   children: [
                     const SizedBox(height: 8),
-                    // Title text
+
                     const Text(
                       'Order Placed Successfully',
                       textAlign: TextAlign.center,
@@ -68,7 +67,7 @@ class OrderSuccessView extends GetView<OrderSuccessController> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Subtitle text
+
                     const Text(
                       'You will receive an email confirmation',
                       textAlign: TextAlign.center,
@@ -78,7 +77,7 @@ class OrderSuccessView extends GetView<OrderSuccessController> {
                       ),
                     ),
                     const Spacer(),
-                    // Action button
+
                     GestureDetector(
                       onTap: controller.seeOrderDetails,
                       behavior: HitTestBehavior.opaque,

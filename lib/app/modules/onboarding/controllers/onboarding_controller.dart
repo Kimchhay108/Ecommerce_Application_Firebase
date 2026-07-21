@@ -34,14 +34,13 @@ class OnboardingController extends GetxController {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid != null) {
-        // Save preferences to Firestore
+
         await FirebaseFirestore.instance.collection('users').doc(uid).update({
           'gender': selectedGender.value,
           'ageRange': selectedAgeRange.value,
         });
       }
 
-      // Sign out the user so they can log back in
       await FirebaseAuth.instance.signOut();
 
       isLoading.value = false;

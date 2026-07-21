@@ -12,11 +12,9 @@ class CheckoutController extends GetxController {
   final CartController cartController = Get.find<CartController>();
   final HomeController homeController = Get.find<HomeController>();
 
-  // Interactive selectors initialized with default address/payment mockup states
   final RxString shippingAddress = '2715 Ash Dr. San Jose, South Dakota 83475'.obs;
   final RxString paymentMethod = '**** 4187'.obs;
 
-  // Custom text editing controller for custom addresses
   final TextEditingController addressInputController = TextEditingController();
 
   @override
@@ -25,7 +23,6 @@ class CheckoutController extends GetxController {
     super.onClose();
   }
 
-  // Retrieve calculated totals from CartController
   double get subtotal => cartController.subtotal;
   double get discount => cartController.discount;
   double get shippingCost => cartController.shippingCost;
@@ -35,17 +32,14 @@ class CheckoutController extends GetxController {
   bool get isCouponApplied => cartController.isCouponApplied.value;
   String get appliedCouponCode => cartController.appliedCouponCode.value;
 
-  // Select shipping address bottom sheet trigger
   void updateShippingAddress(String address) {
     shippingAddress.value = address;
   }
 
-  // Select payment method bottom sheet trigger
   void updatePaymentMethod(String method) {
     paymentMethod.value = method;
   }
 
-  // Checkout and place order validation
   void placeOrder() {
     if (cartController.cartItems.isEmpty) {
       Get.snackbar(
@@ -83,7 +77,6 @@ class CheckoutController extends GetxController {
       return;
     }
 
-    // Capture snapshot of current cart items
     final cartItemsSnapshot = cartController.cartItems
         .map((item) => CartItemModel(
               product: item.product,
@@ -93,10 +86,8 @@ class CheckoutController extends GetxController {
             ))
         .toList();
 
-    // Generate random 6-digit order code
     final orderCode = '#${100000 + Random().nextInt(899999)}';
 
-    // Construct OrderModel
     final newOrder = OrderModel(
       id: 'ord_${DateTime.now().millisecondsSinceEpoch}',
       code: orderCode,
@@ -112,17 +103,14 @@ class CheckoutController extends GetxController {
       total: total,
     );
 
-    // Save to OrdersController state
     final OrdersController ordersController = Get.isRegistered<OrdersController>()
         ? Get.find<OrdersController>()
         : Get.put(OrdersController(), permanent: true);
     ordersController.addOrder(newOrder);
 
-    // Completely clear all cart items and state
     cartController.clearAll();
     homeController.clearCart();
 
-    // Transition to order success screen
     Get.toNamed(Routes.ORDER_SUCCESS, arguments: newOrder);
   }
 }

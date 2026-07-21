@@ -29,7 +29,7 @@ class LoginView extends GetView<LoginController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
-                    // Back button (only on password step)
+
                     if (isPassword) ...[
                       GestureDetector(
                         onTap: controller.goBackToEmailStep,
@@ -52,8 +52,7 @@ class LoginView extends GetView<LoginController> {
                     ] else ...[
                       const SizedBox(height: 64),
                     ],
-                    
-                    // Title
+
                     const Text(
                       'Sign in',
                       style: TextStyle(
@@ -65,8 +64,7 @@ class LoginView extends GetView<LoginController> {
                     const SizedBox(height: 32),
 
                     if (!isPassword) ...[
-                      // STEP 1: EMAIL ENTRY
-                      // Email Input
+
                       Container(
                         decoration: BoxDecoration(
                           color: AppTheme.surfaceColor,
@@ -92,7 +90,6 @@ class LoginView extends GetView<LoginController> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Continue Button
                       Obx(() => GestureDetector(
                         onTap: controller.isLoading.value ? null : controller.signIn,
                         behavior: HitTestBehavior.opaque,
@@ -125,7 +122,6 @@ class LoginView extends GetView<LoginController> {
                       )),
                       const SizedBox(height: 16),
 
-                      // "Don't have an Account ? Create One"
                       Center(
                         child: RichText(
                           text: TextSpan(
@@ -148,10 +144,9 @@ class LoginView extends GetView<LoginController> {
                           ),
                         ),
                       ),
-                      
+
                       const SizedBox(height: 48),
 
-                      // OR Divider
                       Row(
                         children: [
                           Expanded(
@@ -179,10 +174,9 @@ class LoginView extends GetView<LoginController> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 32),
 
-                      // Social Buttons
                       _buildSocialButton(
                         icon: const Icon(
                           Icons.apple,
@@ -224,8 +218,7 @@ class LoginView extends GetView<LoginController> {
                       ),
                       const SizedBox(height: 24),
                     ] else ...[
-                      // STEP 2: PASSWORD ENTRY
-                      // Password Input
+
                       Container(
                         decoration: BoxDecoration(
                           color: AppTheme.surfaceColor,
@@ -262,7 +255,6 @@ class LoginView extends GetView<LoginController> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Continue Button
                       Obx(() => GestureDetector(
                         onTap: controller.isLoading.value ? null : controller.signIn,
                         behavior: HitTestBehavior.opaque,
@@ -295,7 +287,6 @@ class LoginView extends GetView<LoginController> {
                       )),
                       const SizedBox(height: 16),
 
-                      // "Forgot Password ? Reset"
                       Center(
                         child: RichText(
                           text: TextSpan(
@@ -364,7 +355,7 @@ class LoginView extends GetView<LoginController> {
                 ),
               ),
             ),
-            const SizedBox(width: 28), // Balanced spacing counterpart to icon width
+            const SizedBox(width: 28),
           ],
         ),
       ),

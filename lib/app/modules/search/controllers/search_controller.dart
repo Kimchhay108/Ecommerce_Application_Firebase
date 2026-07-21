@@ -6,7 +6,7 @@ import '../../home/controllers/home_controller.dart';
 
 class SearchController extends GetxController {
   final LaravelApiProvider _apiProvider = Get.find<LaravelApiProvider>();
-  
+
   HomeController? get _homeController {
     try {
       return Get.find<HomeController>();
@@ -20,13 +20,11 @@ class SearchController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxString errorMessage = ''.obs;
 
-  // Active filters and query
   final RxString searchQuery = ''.obs;
   final RxString selectedCategory = 'All'.obs;
   final RxBool filterOnSale = false.obs;
-  final RxString selectedSort = 'Sort by'.obs; // 'Sort by', 'Price: Low to High', 'Price: High to Low'
+  final RxString selectedSort = 'Sort by'.obs;
 
-  // Categories list mapping exactly to FakeStoreAPI categories plus a custom "Men" filter
   final RxList<String> categories = <String>['All', "Men's Clothing", "Women's Clothing", 'Electronics', 'Jewelery'].obs;
 
   final TextEditingController searchTextController = TextEditingController();
@@ -34,7 +32,7 @@ class SearchController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Read category or query from arguments if passed
+
     if (Get.arguments is Map) {
       final args = Get.arguments as Map;
       if (args['category'] != null) {
@@ -46,10 +44,8 @@ class SearchController extends GetxController {
       }
     }
 
-    // Debounce search query changes to prevent excessive filtering UI lag
     debounce(searchQuery, (_) => applyFilters(), time: const Duration(milliseconds: 300));
-    
-    // Apply filters immediately when other criteria change
+
     ever(selectedCategory, (_) => applyFilters());
     ever(filterOnSale, (_) => applyFilters());
     ever(selectedSort, (_) => applyFilters());
@@ -77,7 +73,6 @@ class SearchController extends GetxController {
     }
   }
 
-  // Count active filters to display in the filter chip
   int get activeFiltersCount {
     int count = 0;
     if (selectedCategory.value != 'All') count++;
@@ -121,7 +116,6 @@ class SearchController extends GetxController {
   void applyFilters() {
     List<ProductModel> results = List.from(allProducts);
 
-    // 1. Text Search Filter
     final query = searchQuery.value.trim().toLowerCase();
     if (query.isNotEmpty) {
       results = results.where((product) {
@@ -129,7 +123,6 @@ class SearchController extends GetxController {
       }).toList();
     }
 
-    // 2. Category Filter
     final category = selectedCategory.value;
     if (category != 'All') {
       results = results.where((product) {
@@ -137,14 +130,12 @@ class SearchController extends GetxController {
       }).toList();
     }
 
-    // 3. On Sale Filter (items with originalPrice represent items on sale)
     if (filterOnSale.value) {
       results = results.where((product) {
         return product.originalPrice != null;
       }).toList();
     }
 
-    // 4. Sorting
     if (selectedSort.value == 'Price: Low to High') {
       results.sort((a, b) => a.price.compareTo(b.price));
     } else if (selectedSort.value == 'Price: High to Low') {
@@ -154,17 +145,15 @@ class SearchController extends GetxController {
     filteredProducts.assignAll(results);
   }
 
-  // Sync Favorites with HomeController
   bool isFavorited(String productId) {
     return _homeController?.favoritedProductIds.contains(productId) ?? false;
   }
 
   void toggleFavorite(String productId) {
     _homeController?.toggleFavorite(productId);
-    filteredProducts.refresh(); // refresh list to show updated favorite icon
+    filteredProducts.refresh();
   }
 
-  // Sync Cart
   void addToCart(ProductModel product) {
     _homeController?.addToCart(product, 'M', 'Black', 1);
   }

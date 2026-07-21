@@ -13,7 +13,6 @@ class CartItemModel {
     this.quantity = 1,
   });
 
-  // Serialization helpers
   factory CartItemModel.fromJson(Map<String, dynamic> json) {
     return CartItemModel(
       product: ProductModel.fromJson(json['product'] as Map<String, dynamic>),

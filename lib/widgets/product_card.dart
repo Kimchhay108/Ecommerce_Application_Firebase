@@ -37,7 +37,7 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Product Image & Favorite Button
+
             Stack(
               children: [
                 Image.network(
@@ -54,7 +54,7 @@ class ProductCard extends StatelessWidget {
                     );
                   },
                 ),
-                // Favorite Button
+
                 Positioned(
                   top: 8,
                   right: 8,
@@ -84,7 +84,7 @@ class ProductCard extends StatelessWidget {
                 ),
               ],
             ),
-            // Product Info
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(

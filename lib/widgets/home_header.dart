@@ -25,7 +25,7 @@ class HomeHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Profile Image
+
         GestureDetector(
           onTap: onProfileTap,
           child: Container(
@@ -40,10 +40,10 @@ class HomeHeader extends StatelessWidget {
             ),
           ),
         ),
-        // Notification & Shopping Bag Icons
+
         Row(
           children: [
-            // Notification Bell
+
             GestureDetector(
               onTap: onNotificationTap,
               child: Stack(
@@ -91,7 +91,7 @@ class HomeHeader extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            // Shopping Bag (Cart)
+
             GestureDetector(
               onTap: onCartTap,
               child: Stack(

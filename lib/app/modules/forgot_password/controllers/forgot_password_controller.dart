@@ -47,10 +47,10 @@ class ForgotPasswordController extends GetxController {
     }
 
     isLoading.value = true;
-    // Mock password reset request
+
     Future.delayed(const Duration(milliseconds: 1000), () {
       isLoading.value = false;
-      Get.back(); // Pop back to Login screen
+      Get.back();
       Get.snackbar(
         'Email Sent',
         'A password reset link has been successfully sent to $email.',

@@ -4,7 +4,7 @@ import '../../../data/models/order_model.dart';
 import '../../../data/models/product_model.dart';
 
 class OrdersController extends GetxController {
-  // Available status filters
+
   final List<String> statusFilters = const [
     'Processing',
     'Shipped',
@@ -13,10 +13,8 @@ class OrdersController extends GetxController {
     'Canceled',
   ];
 
-  // Active filter state
   final RxString activeFilter = 'Processing'.obs;
 
-  // Master reactive list of all orders
   final RxList<OrderModel> allOrders = <OrderModel>[].obs;
 
   @override
@@ -95,18 +93,15 @@ class OrdersController extends GetxController {
     ]);
   }
 
-  // Add a newly placed order to top of list
   void addOrder(OrderModel order) {
     allOrders.insert(0, order);
-    activeFilter.value = order.status; // Switch filter to see newly placed order
+    activeFilter.value = order.status;
   }
 
-  // Getter to retrieve filtered list of orders
   List<OrderModel> get filteredOrders {
     return allOrders.where((order) => order.status == activeFilter.value).toList();
   }
 
-  // Change active filter tab
   void changeFilter(String filter) {
     activeFilter.value = filter;
   }

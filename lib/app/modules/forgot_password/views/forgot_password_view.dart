@@ -19,8 +19,7 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
-                
-                // Back Button
+
                 GestureDetector(
                   onTap: () => Get.back(),
                   behavior: HitTestBehavior.opaque,
@@ -40,7 +39,6 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                 ),
                 const SizedBox(height: 24),
 
-                // Title
                 const Text(
                   'Forgot Password',
                   style: TextStyle(
@@ -51,7 +49,6 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                 ),
                 const SizedBox(height: 32),
 
-                // Email Input
                 Container(
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceColor,
@@ -77,7 +74,6 @@ class ForgotPasswordView extends GetView<ForgotPasswordController> {
                 ),
                 const SizedBox(height: 24),
 
-                // Continue Button
                 Obx(() => GestureDetector(
                   onTap: controller.isLoading.value ? null : controller.sendResetEmail,
                   behavior: HitTestBehavior.opaque,

@@ -6,7 +6,7 @@ import '../../../routes/app_pages.dart';
 class LoginController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  
+
   final isPasswordStep = false.obs;
   final isPasswordVisible = false.obs;
   final isLoading = false.obs;
@@ -28,7 +28,7 @@ class LoginController extends GetxController {
 
   void signIn() async {
     if (!isPasswordStep.value) {
-      // Step 1: Email Validation
+
       final email = emailController.text.trim();
       if (email.isEmpty) {
         Get.snackbar(
@@ -54,10 +54,9 @@ class LoginController extends GetxController {
         return;
       }
 
-      // Transition to password step
       isPasswordStep.value = true;
     } else {
-      // Step 2: Password Validation
+
       final password = passwordController.text;
       if (password.isEmpty) {
         Get.snackbar(

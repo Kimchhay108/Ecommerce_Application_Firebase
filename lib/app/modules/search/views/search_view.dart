@@ -15,7 +15,7 @@ class SearchView extends GetView<app_search.SearchController> {
       body: SafeArea(
         child: Column(
           children: [
-            // Search Input Header
+
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 8),
               child: Row(
@@ -96,7 +96,6 @@ class SearchView extends GetView<app_search.SearchController> {
               ),
             ),
 
-            // Horizontal Filter Chips
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: SizedBox(
@@ -107,16 +106,13 @@ class SearchView extends GetView<app_search.SearchController> {
                     physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     children: [
-                      // Active Filters Count Chip
+
                       _buildActiveFiltersChip(),
-                      
-                      // On Sale Tag
+
                       _buildOnSaleChip(),
-                      
-                      // Sort Tag
+
                       _buildSortChip(context),
-                      
-                      // Category Tags
+
                       ...controller.categories.where((cat) => cat != 'All').map((cat) {
                         final isSelected = controller.selectedCategory.value.toLowerCase() == cat.toLowerCase();
                         return Padding(
@@ -163,7 +159,6 @@ class SearchView extends GetView<app_search.SearchController> {
               ),
             ),
 
-            // Results Counter & Clear Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
@@ -195,7 +190,6 @@ class SearchView extends GetView<app_search.SearchController> {
               ),
             ),
 
-            // Products Grid / Status States
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {

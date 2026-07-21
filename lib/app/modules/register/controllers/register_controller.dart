@@ -106,7 +106,7 @@ class RegisterController extends GetxController {
 
     isLoading.value = true;
     try {
-      // 1. Create Firebase Auth user
+
       final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -114,14 +114,13 @@ class RegisterController extends GetxController {
 
       final uid = userCredential.user!.uid;
 
-      // 2. Save user details in Cloud Firestore
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
         'uid': uid,
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
-        'gender': '',       // Initialized as blank, will be updated during onboarding
-        'ageRange': '',     // Initialized as blank, will be updated during onboarding
+        'gender': '',
+        'ageRange': '',
         'createdAt': FieldValue.serverTimestamp(),
       });
 

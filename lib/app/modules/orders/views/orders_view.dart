@@ -10,7 +10,7 @@ class OrdersView extends GetView<OrdersController> {
 
   @override
   Widget build(BuildContext context) {
-    // Inject or find the OrdersController
+
     final controller = Get.isRegistered<OrdersController>()
         ? Get.find<OrdersController>()
         : Get.put(OrdersController(), permanent: true);
@@ -21,7 +21,7 @@ class OrdersView extends GetView<OrdersController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Centered Header
+
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Center(
@@ -36,7 +36,6 @@ class OrdersView extends GetView<OrdersController> {
               ),
             ),
 
-            // Horizontal Filter Tabs
             SizedBox(
               height: 40,
               child: ListView.separated(
@@ -102,7 +101,6 @@ class OrdersView extends GetView<OrdersController> {
             ),
             const SizedBox(height: 20),
 
-            // Orders List
             Expanded(
               child: Obx(() {
                 final orders = controller.filteredOrders;
@@ -189,7 +187,7 @@ class OrdersView extends GetView<OrdersController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top row: Code + Status Badge
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -240,7 +238,6 @@ class OrdersView extends GetView<OrdersController> {
                   child: Divider(height: 1, color: Color(0xFFE5E5E5)),
                 ),
 
-                // Item Thumbnails Row
                 if (order.items.isNotEmpty) ...[
                   SizedBox(
                     height: 50,
@@ -274,7 +271,6 @@ class OrdersView extends GetView<OrdersController> {
                   const SizedBox(height: 12),
                 ],
 
-                // Bottom row: Item Count + Total + View Receipt Action
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -406,7 +402,7 @@ class OrdersView extends GetView<OrdersController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top Drag Handle
+
                   Center(
                     child: Container(
                       width: 40,
@@ -419,7 +415,6 @@ class OrdersView extends GetView<OrdersController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Receipt Header Badge
                   Center(
                     child: Column(
                       children: [
@@ -489,7 +484,6 @@ class OrdersView extends GetView<OrdersController> {
                   const Divider(thickness: 1, height: 1),
                   const SizedBox(height: 20),
 
-                  // Shipping & Payment Info
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -561,7 +555,6 @@ class OrdersView extends GetView<OrdersController> {
                   const Divider(thickness: 1, height: 1),
                   const SizedBox(height: 20),
 
-                  // Purchased Items Section
                   const Text(
                     'Order Items',
                     style: TextStyle(
@@ -589,7 +582,7 @@ class OrdersView extends GetView<OrdersController> {
                         ),
                         child: Row(
                           children: [
-                            // Product Image
+
                             Container(
                               width: 50,
                               height: 50,
@@ -608,7 +601,7 @@ class OrdersView extends GetView<OrdersController> {
                                   : null,
                             ),
                             const SizedBox(width: 12),
-                            // Item Details
+
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -643,7 +636,7 @@ class OrdersView extends GetView<OrdersController> {
                                 ],
                               ),
                             ),
-                            // Item Subtotal
+
                             Text(
                               '\$${itemTotal.toStringAsFixed(2)}',
                               style: const TextStyle(
@@ -662,7 +655,6 @@ class OrdersView extends GetView<OrdersController> {
                   const Divider(thickness: 1, height: 1),
                   const SizedBox(height: 20),
 
-                  // Receipt Cost Breakdown Summary
                   const Text(
                     'Price Summary',
                     style: TextStyle(
@@ -678,7 +670,7 @@ class OrdersView extends GetView<OrdersController> {
                     _buildReceiptRow('Discount', '-\$${order.discount.toStringAsFixed(2)}', isDiscount: true),
                   _buildReceiptRow('Shipping Fee', '\$${order.shippingCost.toStringAsFixed(2)}'),
                   _buildReceiptRow('Tax', '\$${order.tax.toStringAsFixed(2)}'),
-                  
+
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 12.0),
                     child: Divider(thickness: 1, height: 1),
@@ -692,7 +684,6 @@ class OrdersView extends GetView<OrdersController> {
 
                   const SizedBox(height: 28),
 
-                  // Close button
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(

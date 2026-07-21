@@ -20,8 +20,7 @@ class RegisterView extends GetView<RegisterController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
-                
-                // Back Button
+
                 GestureDetector(
                   onTap: () => Get.back(),
                   behavior: HitTestBehavior.opaque,
@@ -41,7 +40,6 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 24),
 
-                // Title
                 const Text(
                   'Create Account',
                   style: TextStyle(
@@ -52,7 +50,6 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 32),
 
-                // First Name Input
                 Container(
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceColor,
@@ -79,7 +76,6 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Last Name Input
                 Container(
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceColor,
@@ -106,7 +102,6 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Email Address Input
                 Container(
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceColor,
@@ -132,7 +127,6 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password Input
                 Container(
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceColor,
@@ -168,7 +162,6 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 32),
 
-                // Continue Button
                 Obx(() => GestureDetector(
                   onTap: controller.isLoading.value ? null : controller.register,
                   behavior: HitTestBehavior.opaque,
@@ -201,7 +194,6 @@ class RegisterView extends GetView<RegisterController> {
                 )),
                 const SizedBox(height: 24),
 
-                // "Already have an Account ? Sign In"
                 Center(
                   child: RichText(
                     text: TextSpan(

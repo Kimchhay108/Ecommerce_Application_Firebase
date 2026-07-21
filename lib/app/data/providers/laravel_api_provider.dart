@@ -9,7 +9,6 @@ class LaravelApiProvider extends GetConnect {
     super.onInit();
   }
 
-  // Capitalize title helper
   String _capitalize(String text) {
     if (text.isEmpty) return text;
     return text.split(' ').map((word) {
@@ -18,7 +17,6 @@ class LaravelApiProvider extends GetConnect {
     }).join(' ');
   }
 
-  // Map category strings to rich Unsplash images
   String _getCategoryImage(String category) {
     switch (category.toLowerCase()) {
       case 'electronics':
@@ -34,13 +32,12 @@ class LaravelApiProvider extends GetConnect {
     }
   }
 
-  // Fetch Categories from FakeStoreAPI
   Future<List<CategoryModel>> getCategories() async {
     final response = await get('/products/categories');
     if (response.hasError) {
       throw Exception(response.statusText ?? 'Failed to load categories');
     }
-    
+
     final List<dynamic> data = response.body ?? [];
     return data.asMap().entries.map((entry) {
       final index = entry.key;
@@ -53,7 +50,6 @@ class LaravelApiProvider extends GetConnect {
     }).toList();
   }
 
-  // Fetch Top Selling products (we will query first 8 items)
   Future<List<ProductModel>> getTopSellingProducts() async {
     final response = await get('/products?limit=8');
     if (response.hasError) {
@@ -65,8 +61,7 @@ class LaravelApiProvider extends GetConnect {
       final idInt = e['id'] as int;
       final priceNum = e['price'] as num;
       final price = priceNum.toDouble();
-      
-      // Mock original price on even IDs to showcase discount tags
+
       final originalPrice = idInt % 2 == 0 ? price * 1.45 : null;
 
       return ProductModel(
@@ -81,7 +76,6 @@ class LaravelApiProvider extends GetConnect {
     }).toList();
   }
 
-  // Fetch New In products (we will query last 8 items using sort=desc)
   Future<List<ProductModel>> getNewInProducts() async {
     final response = await get('/products?sort=desc&limit=8');
     if (response.hasError) {
@@ -105,7 +99,6 @@ class LaravelApiProvider extends GetConnect {
     }).toList();
   }
 
-  // Fetch all products for search/filter functionality
   Future<List<ProductModel>> getAllProducts() async {
     final response = await get('/products');
     if (response.hasError) {
@@ -118,7 +111,6 @@ class LaravelApiProvider extends GetConnect {
       final priceNum = e['price'] as num;
       final price = priceNum.toDouble();
 
-      // Mock original price on even IDs to showcase discount tags
       final originalPrice = idInt % 2 == 0 ? price * 1.45 : null;
 
       return ProductModel(

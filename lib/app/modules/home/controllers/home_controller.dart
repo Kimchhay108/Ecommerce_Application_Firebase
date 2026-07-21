@@ -7,24 +7,22 @@ import '../../../data/providers/laravel_api_provider.dart';
 class HomeController extends GetxController {
   final LaravelApiProvider _apiProvider = Get.put(LaravelApiProvider());
 
-  // Observables
   final RxList<CategoryModel> categories = <CategoryModel>[].obs;
   final RxList<ProductModel> topSelling = <ProductModel>[].obs;
   final RxList<ProductModel> newIn = <ProductModel>[].obs;
-  
+
   final RxBool isLoading = true.obs;
   final RxString selectedGender = 'Men'.obs;
   final RxInt currentIndex = 0.obs;
   final RxList<String> favoritedProductIds = <String>[].obs;
   final RxInt cartItemCount = 0.obs;
 
-  // Reactive Cart items list initialized empty
   final RxList<CartItemModel> cartItems = <CartItemModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Synchronize cart count badge reactively
+
     cartItemCount.value = cartItems.fold(0, (sum, item) => sum + item.quantity);
     cartItems.listen((items) {
       cartItemCount.value = items.fold(0, (sum, item) => sum + item.quantity);
@@ -32,7 +30,6 @@ class HomeController extends GetxController {
     fetchData();
   }
 
-  // Fetch data from provider with silent fallback
   Future<void> fetchData() async {
     try {
       isLoading.value = true;
@@ -44,7 +41,7 @@ class HomeController extends GetxController {
       if (fetchedTopSelling.isNotEmpty) topSelling.assignAll(fetchedTopSelling);
       if (fetchedNewIn.isNotEmpty) newIn.assignAll(fetchedNewIn);
     } catch (_) {
-      // Load offline fallback data silently without popping error snackbar
+
       _loadFallbackData();
     } finally {
       isLoading.value = false;
@@ -101,7 +98,6 @@ class HomeController extends GetxController {
     }
   }
 
-  // Toggle favorite status
   void toggleFavorite(String productId) {
     if (favoritedProductIds.contains(productId)) {
       favoritedProductIds.remove(productId);
@@ -110,7 +106,6 @@ class HomeController extends GetxController {
     }
   }
 
-  // Toggle/cycle through genders for the header dropdown
   void toggleGender() {
     if (selectedGender.value == 'Men') {
       selectedGender.value = 'Women';
@@ -121,12 +116,10 @@ class HomeController extends GetxController {
     }
   }
 
-  // Handle bottom navigation tab changes
   void changeTab(int index) {
     currentIndex.value = index;
   }
 
-  // Add item to cart
   void addToCart(ProductModel product, String size, String color, int qty) {
     final existingIndex = cartItems.indexWhere((item) =>
         item.product.id == product.id &&
@@ -146,12 +139,10 @@ class HomeController extends GetxController {
     }
   }
 
-  // Remove item from cart
   void removeFromCart(CartItemModel item) {
     cartItems.remove(item);
   }
 
-  // Clear all items from cart
   void clearCart() {
     cartItems.clear();
     cartItemCount.value = 0;

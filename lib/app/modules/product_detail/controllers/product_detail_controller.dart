@@ -6,7 +6,6 @@ import '../../home/controllers/home_controller.dart';
 class ProductDetailController extends GetxController {
   late final ProductModel product;
 
-  // Retrieve HomeController to sync global states (cart count & favorites list)
   HomeController? get _homeController {
     try {
       return Get.find<HomeController>();
@@ -15,7 +14,6 @@ class ProductDetailController extends GetxController {
     }
   }
 
-  // Selections
   final RxString selectedSize = 'S'.obs;
   final RxInt selectedColorIndex = 0.obs;
   final RxInt quantity = 1.obs;
@@ -33,11 +31,11 @@ class ProductDetailController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Retrieve passed product argument
+
     if (Get.arguments is ProductModel) {
       product = Get.arguments as ProductModel;
     } else {
-      // Fallback in case of missing arguments
+
       product = const ProductModel(
         id: 'mock_1',
         title: 'Mock Jacket',
@@ -46,8 +44,7 @@ class ProductDetailController extends GetxController {
         description: 'Built for life and made to last, this premium item is a perfect match.',
       );
     }
-    
-    // Check initial favorite status
+
     if (_homeController != null) {
       isFavorited.value = _homeController!.favoritedProductIds.contains(product.id);
     }
@@ -86,7 +83,7 @@ class ProductDetailController extends GetxController {
         colors[selectedColorIndex.value]['name'] as String,
         quantity.value,
       );
-      
+
       Get.snackbar(
         'Added to Bag',
         '${quantity.value}x ${product.title} (${selectedSize.value}) has been added to your shopping bag!',

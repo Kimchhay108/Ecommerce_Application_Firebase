@@ -7,7 +7,6 @@ import '../../home/controllers/home_controller.dart';
 class CategoriesView extends GetView<HomeController> {
   const CategoriesView({super.key});
 
-  // Curated, high-resolution Unsplash images for full category cards
   String _getLargeCategoryImage(String category) {
     switch (category.toLowerCase()) {
       case 'electronics':
@@ -31,7 +30,7 @@ class CategoriesView extends GetView<HomeController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Page Header
+
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Text(
@@ -43,8 +42,7 @@ class CategoriesView extends GetView<HomeController> {
                 ),
               ),
             ),
-            
-            // Categories List
+
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
@@ -86,7 +84,7 @@ class CategoriesView extends GetView<HomeController> {
                         ),
                         child: Stack(
                           children: [
-                            // Background Image
+
                             Image.network(
                               imageUrl,
                               height: 100,
@@ -100,8 +98,7 @@ class CategoriesView extends GetView<HomeController> {
                                 );
                               },
                             ),
-                            
-                            // Dark Gradient Overlay for premium text contrast
+
                             Container(
                               height: 100,
                               width: double.infinity,
@@ -117,8 +114,7 @@ class CategoriesView extends GetView<HomeController> {
                                 ),
                               ),
                             ),
-                            
-                            // Category Title
+
                             Positioned(
                               left: 20,
                               top: 0,
@@ -137,7 +133,6 @@ class CategoriesView extends GetView<HomeController> {
                               ),
                             ),
 
-                            // Small arrow indicator on the right
                             const Positioned(
                               right: 20,
                               top: 0,

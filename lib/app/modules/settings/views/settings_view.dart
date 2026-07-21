@@ -10,7 +10,7 @@ class SettingsView extends GetView<SettingsController> {
 
   @override
   Widget build(BuildContext context) {
-    // Inject the controller if it's not already put globally
+
     final controller = Get.put(SettingsController());
     controller.fetchUserProfile();
 
@@ -23,7 +23,7 @@ class SettingsView extends GetView<SettingsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
+
               const Center(
                 child: Text(
                   'Profile',
@@ -36,7 +36,6 @@ class SettingsView extends GetView<SettingsController> {
               ),
               const SizedBox(height: 24),
 
-              // Avatar Circle
               Obx(() => Container(
                     width: 80,
                     height: 80,
@@ -50,7 +49,6 @@ class SettingsView extends GetView<SettingsController> {
                   )),
               const SizedBox(height: 24),
 
-              // User Info Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -122,7 +120,6 @@ class SettingsView extends GetView<SettingsController> {
               ),
               const SizedBox(height: 24),
 
-              // Settings Options List
               _buildSettingItem(
                 title: 'Address',
                 icon: Icons.location_on_outlined,
@@ -158,7 +155,6 @@ class SettingsView extends GetView<SettingsController> {
               ),
               const SizedBox(height: 32),
 
-              // Sign Out Button
               GestureDetector(
                 onTap: controller.signOut,
                 child: Container(
@@ -241,7 +237,6 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  // 1. ADDRESS BOTTOM SHEET
   void _showAddressBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -341,7 +336,6 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  // 2. WISHLIST BOTTOM SHEET
   void _showWishlistBottomSheet(BuildContext context) {
     final homeCtrl = Get.isRegistered<HomeController>() ? Get.find<HomeController>() : null;
 
@@ -496,7 +490,6 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  // 3. PAYMENT BOTTOM SHEET
   void _showPaymentBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -585,7 +578,6 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  // 4. HELP & FAQ BOTTOM SHEET
   void _showHelpBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -671,7 +663,6 @@ class SettingsView extends GetView<SettingsController> {
     );
   }
 
-  // 5. CUSTOMER SUPPORT BOTTOM SHEET
   void _showSupportBottomSheet(BuildContext context) {
     final subjectCtrl = TextEditingController();
     final messageCtrl = TextEditingController();

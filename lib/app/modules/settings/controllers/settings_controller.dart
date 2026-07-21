@@ -6,7 +6,7 @@ import '../../../routes/app_pages.dart';
 import '../../../theme/app_theme.dart';
 
 class SettingsController extends GetxController {
-  // Reactive user profile states
+
   final RxString userName = 'Gilbert Jones'.obs;
   final RxString userEmail = 'Glbertjones001@gmail.com'.obs;
   final RxString userPhone = '121-224-7890'.obs;
@@ -18,7 +18,6 @@ class SettingsController extends GetxController {
     fetchUserProfile();
   }
 
-  // Fetch real user profile from Cloud Firestore
   Future<void> fetchUserProfile() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -43,7 +42,6 @@ class SettingsController extends GetxController {
     }
   }
 
-  // Edit profile dialog bottom sheet
   void editProfile() {
     final nameParts = userName.value.split(' ');
     final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
@@ -85,7 +83,6 @@ class SettingsController extends GetxController {
               ),
               const SizedBox(height: 16),
 
-              // First Name Field
               const Text(
                  'First Name',
                  style: TextStyle(
@@ -111,7 +108,6 @@ class SettingsController extends GetxController {
               ),
               const SizedBox(height: 16),
 
-              // Last Name Field
               const Text(
                  'Last Name',
                  style: TextStyle(
@@ -137,7 +133,6 @@ class SettingsController extends GetxController {
               ),
               const SizedBox(height: 16),
 
-              // Phone Field
               const Text(
                  'Phone Number',
                  style: TextStyle(
@@ -164,7 +159,6 @@ class SettingsController extends GetxController {
               ),
               const SizedBox(height: 24),
 
-              // Save Button
               Obx(() => SizedBox(
                  width: double.infinity,
                  height: 48,
@@ -204,7 +198,7 @@ class SettingsController extends GetxController {
                                userName.value = '$newFirst $newLast'.trim();
                                userPhone.value = newPhone;
 
-                               Get.back(); // close bottom sheet
+                               Get.back();
                                Get.snackbar(
                                  'Profile Updated',
                                  'Your profile information has been saved.',
@@ -260,7 +254,6 @@ class SettingsController extends GetxController {
     );
   }
 
-  // Sign out action
   void signOut() {
     Get.defaultDialog(
       title: 'Sign Out',
@@ -270,9 +263,9 @@ class SettingsController extends GetxController {
       confirmTextColor: Colors.white,
       buttonColor: Colors.redAccent,
       onConfirm: () async {
-        Get.back(); // close dialog
+        Get.back();
         await FirebaseAuth.instance.signOut();
-        Get.delete<SettingsController>(); // Clear controller instance
+        Get.delete<SettingsController>();
         Get.offAllNamed(Routes.LOGIN);
         Get.snackbar(
           'Sign Out',
@@ -286,5 +279,4 @@ class SettingsController extends GetxController {
     );
   }
 }
-
 

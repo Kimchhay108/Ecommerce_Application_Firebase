@@ -6,7 +6,6 @@ import '../controllers/product_detail_controller.dart';
 class ProductDetailView extends GetView<ProductDetailController> {
   const ProductDetailView({super.key});
 
-  // Display custom bottom sheets for size selection
   void _showSizeBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
@@ -68,7 +67,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  // Display custom bottom sheets for color selection
   void _showColorBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
@@ -139,7 +137,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
   Widget build(BuildContext context) {
     final product = controller.product;
 
-    // Use page indicator state locally for the PageView carousel
     final RxInt activeCarouselIndex = 0.obs;
 
     return Scaffold(
@@ -149,7 +146,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Images Carousel Section
+
             Stack(
               children: [
                 SizedBox(
@@ -159,7 +156,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     itemCount: 3,
                     onPageChanged: (index) => activeCarouselIndex.value = index,
                     itemBuilder: (context, index) {
-                      // Return main image for first index, or category unsplash images for extra variety
+
                       final displayUrl = index == 0
                           ? product.imageUrl
                           : (product.category?.toLowerCase() == 'electronics'
@@ -181,15 +178,14 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     },
                   ),
                 ),
-                
-                // Top Custom App Bar Overlays
+
                 SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Back Button
+
                         GestureDetector(
                           onTap: () => Get.back(),
                           behavior: HitTestBehavior.opaque,
@@ -207,8 +203,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                             ),
                           ),
                         ),
-                        
-                        // Favorite Toggle Button
+
                         GestureDetector(
                           onTap: controller.toggleFavorite,
                           behavior: HitTestBehavior.opaque,
@@ -235,7 +230,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   ),
                 ),
 
-                // Dot Carousel Indicators
                 Positioned(
                   bottom: 16,
                   left: 0,
@@ -263,14 +257,13 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 ),
               ],
             ),
-            
-            // Product details body
+
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Product Title
+
                   Text(
                     product.title,
                     style: const TextStyle(
@@ -280,8 +273,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
-                  // Product Price
+
                   Text(
                     '\$${product.price.toStringAsFixed(2)}',
                     style: const TextStyle(
@@ -292,7 +284,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Selectors
                   _buildSelectorCard(
                     label: 'Size',
                     valueWidget: Obx(() => Text(
@@ -338,7 +329,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Quantity counter row
                   Container(
                     height: 56,
                     decoration: BoxDecoration(
@@ -407,7 +397,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Product Description
                   Text(
                     product.description ?? 'Built for life and made to last, this premium item is crafted with premium fabrics and standard details.',
                     style: const TextStyle(
@@ -418,7 +407,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Shipping & Returns dropdown accordion
                   Theme(
                     data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                     child: ExpansionTile(
@@ -449,7 +437,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   const Divider(color: AppTheme.surfaceColor),
                   const SizedBox(height: 16),
 
-                  // Reviews Block
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -506,7 +493,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 100), // Spacing for bottom anchored action bar
+                  const SizedBox(height: 100),
                 ],
               ),
             ),

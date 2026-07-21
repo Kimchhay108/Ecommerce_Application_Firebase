@@ -13,7 +13,7 @@ class CartView extends GetView<CartController> {
       body: SafeArea(
         child: Column(
           children: [
-            // Custom Header Bar
+
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 8),
               child: Row(
@@ -44,12 +44,11 @@ class CartView extends GetView<CartController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 40), // Spacer balancing the back button
+                  const SizedBox(width: 40),
                 ],
               ),
             ),
 
-            // Scrollable Content
             Expanded(
               child: Obx(() {
                 if (controller.cartItems.isEmpty) {
@@ -98,7 +97,7 @@ class CartView extends GetView<CartController> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      // Remove All button row
+
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                         child: Align(
@@ -118,7 +117,6 @@ class CartView extends GetView<CartController> {
                         ),
                       ),
 
-                      // Cart Items List
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -136,7 +134,7 @@ class CartView extends GetView<CartController> {
                             ),
                             child: Row(
                               children: [
-                                // Product Image
+
                                 Container(
                                   width: 64,
                                   height: 64,
@@ -157,12 +155,11 @@ class CartView extends GetView<CartController> {
                                 ),
                                 const SizedBox(width: 12),
 
-                                // Details Column
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      // Title & Price Row
+
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -191,11 +188,10 @@ class CartView extends GetView<CartController> {
                                       ),
                                       const SizedBox(height: 8),
 
-                                      // Subtitle Row (Size, Color, Counter)
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          // Size & Color Labels
+
                                           Row(
                                             children: [
                                               Text.rich(
@@ -252,7 +248,6 @@ class CartView extends GetView<CartController> {
                                             ],
                                           ),
 
-                                          // Quantity Adjuster Buttons
                                           Row(
                                             children: [
                                               GestureDetector(
@@ -307,7 +302,6 @@ class CartView extends GetView<CartController> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Coupon Code Entry Block
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Container(
@@ -371,8 +365,7 @@ class CartView extends GetView<CartController> {
                           ),
                         ),
                       ),
-                      
-                      // Coupon Error Text
+
                       Obx(() => controller.couponError.value.isNotEmpty
                           ? Padding(
                               padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
@@ -387,7 +380,6 @@ class CartView extends GetView<CartController> {
                           : const SizedBox.shrink()),
                       const SizedBox(height: 24),
 
-                      // Order pricing breakdown
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Column(

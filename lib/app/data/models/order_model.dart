@@ -5,7 +5,7 @@ class OrderModel {
   final String code;
   final DateTime date;
   final List<CartItemModel> items;
-  final String status; // 'Processing', 'Shipped', 'Delivered', 'Returned', 'Canceled'
+  final String status;
   final String shippingAddress;
   final String paymentMethod;
   final double subtotal;

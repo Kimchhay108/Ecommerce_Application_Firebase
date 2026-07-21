@@ -39,21 +39,21 @@ class NotificationsView extends GetView<NotificationsController> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(),
-              // Visual Illustration
+
               Container(
                 width: 100,
                 height: 100,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(
-                      'https://cdn-icons-png.flaticon.com/512/3239/3239958.png', // 3D bell illustration
+                      'https://cdn-icons-png.flaticon.com/512/3239/3239958.png',
                     ),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              // Empty text label
+
               const SizedBox(
                 width: 342,
                 child: Text(
@@ -67,10 +67,10 @@ class NotificationsView extends GetView<NotificationsController> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Explore Categories Action Button
+
               GestureDetector(
                 onTap: () {
-                  // Navigate back to home page and reset tab if necessary
+
                   Get.back();
                 },
                 child: Container(
