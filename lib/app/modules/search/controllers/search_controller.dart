@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/models/product_model.dart';
-import '../../../data/providers/laravel_api_provider.dart';
+import '../../../data/services/supabase_product_service.dart';
 import '../../home/controllers/home_controller.dart';
 
 class SearchController extends GetxController {
-  final LaravelApiProvider _apiProvider = Get.find<LaravelApiProvider>();
+  final IProductRepository _productRepository = SupabaseProductService.to.repository;
 
   HomeController? get _homeController {
     try {
@@ -63,7 +63,13 @@ class SearchController extends GetxController {
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      final fetchedProducts = await _apiProvider.getAllProducts();
+      
+      final fetchedCategories = await _productRepository.getCategories();
+      if (fetchedCategories.isNotEmpty) {
+        categories.assignAll(['All'] + fetchedCategories.map((c) => c.title).toList());
+      }
+
+      final fetchedProducts = await _productRepository.getProducts();
       allProducts.assignAll(fetchedProducts);
       applyFilters();
     } catch (e) {

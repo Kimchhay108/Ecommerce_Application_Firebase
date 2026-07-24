@@ -12,7 +12,20 @@
           "package_name": "com.example.ecommerce_flutter_laravel"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "502799509485-82roph1n2p6217b176mfned2fhfah4gs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ecommerce_flutter_laravel",
+            "certificate_hash": "951c10867d2e45ad772f7d921a7c5b0a62469a38"
+          }
+        },
+        {
+          "client_id": "502799509485-9t4pp3n3ho6qr7lgm7bon7oacj986bsd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDEE4-YZqE_JW3QwKx42IBggNmxu9-RLgc"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502799509485-9t4pp3n3ho6qr7lgm7bon7oacj986bsd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "502799509485-7nr5oev0hh1b6167fcfjutrrm5lvoent.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ecommerceFlutterLaravel"
+              }
+            }
+          ]
         }
       }
     }

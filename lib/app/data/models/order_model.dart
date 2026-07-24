@@ -13,6 +13,7 @@ class OrderModel {
   final double shippingCost;
   final double tax;
   final double total;
+  final String? userId;
 
   const OrderModel({
     required this.id,
@@ -27,6 +28,7 @@ class OrderModel {
     required this.shippingCost,
     required this.tax,
     required this.total,
+    this.userId,
   });
 
   int get itemCount {
@@ -49,6 +51,7 @@ class OrderModel {
       shippingCost: (json['shippingCost'] as num).toDouble(),
       tax: (json['tax'] as num).toDouble(),
       total: (json['total'] as num).toDouble(),
+      userId: json['userId'] as String?,
     );
   }
 
@@ -66,6 +69,7 @@ class OrderModel {
       'shippingCost': shippingCost,
       'tax': tax,
       'total': total,
+      'userId': userId,
     };
   }
 }

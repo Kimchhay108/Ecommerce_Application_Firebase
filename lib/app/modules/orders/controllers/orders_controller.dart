@@ -1,9 +1,12 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import '../../../data/models/cart_item_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../../../data/models/order_model.dart';
-import '../../../data/models/product_model.dart';
 
 class OrdersController extends GetxController {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  StreamSubscription<User?>? _authSubscription;
 
   final List<String> statusFilters = const [
     'Processing',
@@ -14,88 +17,111 @@ class OrdersController extends GetxController {
   ];
 
   final RxString activeFilter = 'Processing'.obs;
-
   final RxList<OrderModel> allOrders = <OrderModel>[].obs;
+  final RxBool isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadInitialOrders();
+    // Listen to authentication state changes to fetch user-specific orders
+    _authSubscription = _auth.authStateChanges().listen((User? user) {
+      if (user != null) {
+        fetchUserOrders(user.uid);
+      } else {
+        allOrders.clear();
+      }
+    });
   }
 
-  void _loadInitialOrders() {
-    if (allOrders.isNotEmpty) return;
-
-    final sampleProduct1 = const ProductModel(
-      id: 'p1',
-      title: "Men's Fleece Hooded Sweatshirt",
-      imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500',
-      price: 100.0,
-    );
-
-    final sampleProduct2 = const ProductModel(
-      id: 'p2',
-      title: 'Fleece Pullover Skate Hoodie',
-      imageUrl: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=500',
-      price: 148.0,
-    );
-
-    allOrders.assignAll([
-      OrderModel(
-        id: 'ord_sample_1',
-        code: '#456765',
-        date: DateTime.now().subtract(const Duration(hours: 3)),
-        items: [
-          CartItemModel(product: sampleProduct1, selectedSize: 'M', selectedColor: 'Black', quantity: 2),
-          CartItemModel(product: sampleProduct2, selectedSize: 'L', selectedColor: 'Grey', quantity: 1),
-        ],
-        status: 'Processing',
-        shippingAddress: '2715 Ash Dr. San Jose, South Dakota 83475',
-        paymentMethod: '**** 4187',
-        subtotal: 348.0,
-        discount: 0.0,
-        shippingCost: 8.0,
-        tax: 0.0,
-        total: 356.0,
-      ),
-      OrderModel(
-        id: 'ord_sample_2',
-        code: '#441920',
-        date: DateTime.now().subtract(const Duration(days: 2)),
-        items: [
-          CartItemModel(product: sampleProduct2, selectedSize: 'S', selectedColor: 'Red', quantity: 1),
-        ],
-        status: 'Shipped',
-        shippingAddress: '123 Main St, Springfield, IL 62701',
-        paymentMethod: '**** 9821',
-        subtotal: 148.0,
-        discount: 14.8,
-        shippingCost: 8.0,
-        tax: 0.0,
-        total: 141.2,
-      ),
-      OrderModel(
-        id: 'ord_sample_3',
-        code: '#412982',
-        date: DateTime.now().subtract(const Duration(days: 5)),
-        items: [
-          CartItemModel(product: sampleProduct1, selectedSize: 'XL', selectedColor: 'Blue', quantity: 1),
-        ],
-        status: 'Delivered',
-        shippingAddress: '2715 Ash Dr. San Jose, South Dakota 83475',
-        paymentMethod: '**** 4187',
-        subtotal: 100.0,
-        discount: 0.0,
-        shippingCost: 8.0,
-        tax: 0.0,
-        total: 108.0,
-      ),
-    ]);
+  @override
+  void onClose() {
+    _authSubscription?.cancel();
+    super.onClose();
   }
 
-  void addOrder(OrderModel order) {
+  Future<void> fetchUserOrders(String uid) async {
+    isLoading.value = true;
+    try {
+      final List<dynamic> response = await sb.Supabase.instance.client
+          .from('orders')
+          .select()
+          .eq('user_id', uid)
+          .order('date', ascending: false);
+
+      final list = response.map((data) {
+        final mappedJson = {
+          'id': data['id'].toString(),
+          'code': data['code'],
+          'date': data['date'],
+          'items': data['items'],
+          'status': data['status'],
+          'shippingAddress': data['shipping_address'] ?? 'N/A',
+          'paymentMethod': data['payment_method'] ?? 'N/A',
+          'subtotal': (data['subtotal'] as num).toDouble(),
+          'discount': (data['discount'] as num).toDouble(),
+          'shippingCost': (data['shipping_cost'] as num).toDouble(),
+          'tax': (data['tax'] as num).toDouble(),
+          'total': (data['total'] as num).toDouble(),
+        };
+        return OrderModel.fromJson(mappedJson);
+      }).toList();
+
+      allOrders.assignAll(list);
+    } catch (e) {
+      print('Error fetching orders from Supabase: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> addOrder(OrderModel order) async {
+    // Add locally to update UI immediately
     allOrders.insert(0, order);
     activeFilter.value = order.status;
+
+    // Save to Supabase
+    final user = _auth.currentUser;
+    if (user != null) {
+      try {
+        final orderJson = order.toJson();
+
+        // Self-heal: ensure user row exists in Supabase to prevent foreign key violations
+        final userDoc = await sb.Supabase.instance.client
+            .from('users')
+            .select()
+            .eq('id', user.uid)
+            .maybeSingle();
+
+        if (userDoc == null) {
+          await sb.Supabase.instance.client.from('users').insert({
+            'id': user.uid,
+            'first_name': user.displayName ?? '',
+            'last_name': '',
+            'email': user.email ?? '',
+            'avatar_url': user.photoURL ?? '',
+            'gender': '',
+            'age_range': '',
+          });
+        }
+
+        await sb.Supabase.instance.client.from('orders').insert({
+          'user_id': user.uid,
+          'code': order.code,
+          'date': order.date.toIso8601String(),
+          'items': orderJson['items'],
+          'status': order.status,
+          'shipping_address': order.shippingAddress,
+          'payment_method': order.paymentMethod,
+          'subtotal': order.subtotal,
+          'discount': order.discount,
+          'shipping_cost': order.shippingCost,
+          'tax': order.tax,
+          'total': order.total,
+        });
+      } catch (e) {
+        print('Error saving order to Supabase: $e');
+      }
+    }
   }
 
   List<OrderModel> get filteredOrders {

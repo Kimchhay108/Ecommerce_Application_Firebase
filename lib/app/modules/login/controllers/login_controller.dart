@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../routes/app_pages.dart';
+import '../../../data/services/auth_service.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();
@@ -92,7 +93,30 @@ class LoginController extends GetxController {
           password: password,
         );
 
+        final user = userCredential.user;
+        if (user != null) {
+          final isBanned = await AuthService.to.checkIfBanned(user.uid);
+          if (isBanned) {
+            await FirebaseAuth.instance.signOut();
+            isLoading.value = false;
+            Get.dialog(
+              AlertDialog(
+                title: const Text('Account Banned', style: TextStyle(fontWeight: FontWeight.bold)),
+                content: const Text('Your account has been banned by the administrator.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+            return;
+          }
+        }
+
         isLoading.value = false;
+        await AuthService.to.setLoggedIn(true);
         Get.offAllNamed(Routes.HOME);
         Get.snackbar(
           'Welcome back!',
@@ -145,24 +169,84 @@ class LoginController extends GetxController {
     Get.toNamed(Routes.FORGOT_PASSWORD, arguments: email);
   }
 
-  void signInWithGoogle() {
+  void signInWithGoogle() async {
     isLoading.value = true;
-    Future.delayed(const Duration(milliseconds: 600), () {
+    try {
+      final result = await AuthService.to.signInWithGoogle();
       isLoading.value = false;
-      Get.offAllNamed(Routes.HOME);
+
+      if (result['error'] != null) {
+        Get.snackbar(
+          'Google Sign In Failed',
+          result['error'].toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent.withOpacity(0.9),
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+        );
+        return;
+      }
+
+      if (result['user'] == null) {
+        // User cancelled sign in
+        return;
+      }
+
+      final isNewUser = result['isNewUser'] == true;
+      final User user = result['user'];
+
+      final isBanned = await AuthService.to.checkIfBanned(user.uid);
+      if (isBanned) {
+        await AuthService.to.signOut();
+        isLoading.value = false;
+        Get.dialog(
+          AlertDialog(
+            title: const Text('Account Banned', style: TextStyle(fontWeight: FontWeight.bold)),
+            content: const Text('Your account has been banned by the administrator.'),
+            actions: [
+              TextButton(
+                onPressed: () => Get.back(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      if (isNewUser) {
+        Get.offAllNamed(Routes.ONBOARDING);
+      } else {
+        await AuthService.to.setLoggedIn(true);
+        Get.offAllNamed(Routes.HOME);
+      }
+
       Get.snackbar(
-        'Google Sign In',
-        'Successfully signed in with Google!',
+        'Welcome!',
+        'Successfully signed in as ${user.displayName ?? user.email ?? 'Google User'}',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withOpacity(0.9),
+        colorText: Colors.white,
         margin: const EdgeInsets.all(16),
       );
-    });
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
   void signInWithApple() {
     isLoading.value = true;
-    Future.delayed(const Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 600), () async {
       isLoading.value = false;
+      await AuthService.to.setLoggedIn(true);
       Get.offAllNamed(Routes.HOME);
       Get.snackbar(
         'Apple Sign In',
@@ -175,8 +259,9 @@ class LoginController extends GetxController {
 
   void signInWithFacebook() {
     isLoading.value = true;
-    Future.delayed(const Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 600), () async {
       isLoading.value = false;
+      await AuthService.to.setLoggedIn(true);
       Get.offAllNamed(Routes.HOME);
       Get.snackbar(
         'Facebook Sign In',

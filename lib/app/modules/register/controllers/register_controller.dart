@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../../../routes/app_pages.dart';
+import '../../../data/services/auth_service.dart';
 
 class RegisterController extends GetxController {
   final firstNameController = TextEditingController();
@@ -114,14 +115,13 @@ class RegisterController extends GetxController {
 
       final uid = userCredential.user!.uid;
 
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
-        'uid': uid,
-        'firstName': firstName,
-        'lastName': lastName,
+      await sb.Supabase.instance.client.from('users').insert({
+        'id': uid,
+        'first_name': firstName,
+        'last_name': lastName,
         'email': email,
         'gender': '',
-        'ageRange': '',
-        'createdAt': FieldValue.serverTimestamp(),
+        'age_range': '',
       });
 
       isLoading.value = false;
@@ -153,6 +153,60 @@ class RegisterController extends GetxController {
         errorMessage,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent.withOpacity(0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+      );
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+      );
+    }
+  }
+
+  void signUpWithGoogle() async {
+    isLoading.value = true;
+    try {
+      final result = await AuthService.to.signInWithGoogle();
+      isLoading.value = false;
+
+      if (result['error'] != null) {
+        Get.snackbar(
+          'Google Sign Up Failed',
+          result['error'].toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent.withOpacity(0.9),
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+        );
+        return;
+      }
+
+      if (result['user'] == null) {
+        // User cancelled sign in
+        return;
+      }
+
+      final isNewUser = result['isNewUser'] == true;
+      final User user = result['user'];
+
+      if (isNewUser) {
+        Get.offAllNamed(Routes.ONBOARDING);
+      } else {
+        await AuthService.to.setLoggedIn(true);
+        Get.offAllNamed(Routes.HOME);
+      }
+
+      Get.snackbar(
+        'Welcome!',
+        'Successfully authenticated as ${user.displayName ?? user.email ?? 'Google User'}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withOpacity(0.9),
         colorText: Colors.white,
         margin: const EdgeInsets.all(16),
       );

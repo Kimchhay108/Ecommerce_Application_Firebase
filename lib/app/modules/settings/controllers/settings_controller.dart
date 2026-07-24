@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'package:image_picker/image_picker.dart';
 import '../../../routes/app_pages.dart';
 import '../../../theme/app_theme.dart';
+import '../../../data/services/auth_service.dart';
 
 class SettingsController extends GetxController {
 
@@ -22,23 +24,100 @@ class SettingsController extends GetxController {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-        if (doc.exists) {
-          final data = doc.data();
-          if (data != null) {
-            final first = data['firstName'] ?? '';
-            final last = data['lastName'] ?? '';
-            userName.value = '$first $last'.trim().isEmpty ? 'User' : '$first $last'.trim();
-            userEmail.value = data['email'] ?? user.email ?? '';
-            userPhone.value = data['phone'] ?? '';
-            if (data['avatarUrl'] != null && data['avatarUrl'].toString().isNotEmpty) {
-              userAvatarUrl.value = data['avatarUrl'];
-            }
+        final data = await sb.Supabase.instance.client
+            .from('users')
+            .select()
+            .eq('id', user.uid)
+            .maybeSingle();
+
+        if (data != null) {
+          final first = data['first_name'] ?? '';
+          final last = data['last_name'] ?? '';
+          userName.value = '$first $last'.trim().isEmpty ? 'User' : '$first $last'.trim();
+          userEmail.value = data['email'] ?? user.email ?? '';
+          userPhone.value = data['phone'] ?? '';
+          if (data['avatar_url'] != null && data['avatar_url'].toString().isNotEmpty) {
+            userAvatarUrl.value = data['avatar_url'];
           }
         }
       }
     } catch (e) {
       debugPrint('Error fetching profile: $e');
+    }
+  }
+
+  Future<void> pickAndUploadAvatar() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+
+      if (image == null) return;
+
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        barrierDismissible: false,
+      );
+
+      final fileBytes = await image.readAsBytes();
+      final fileExtension = image.name.split('.').last;
+      final fileName = '${user.uid}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+      final filePath = 'avatars/$fileName';
+
+      // Upload file to Supabase Storage
+      await sb.Supabase.instance.client.storage
+          .from('avatars')
+          .uploadBinary(
+            filePath,
+            fileBytes,
+            fileOptions: sb.FileOptions(
+              cacheControl: '3600',
+              upsert: true,
+              contentType: 'image/$fileExtension',
+            ),
+          );
+
+      // Get Public URL
+      final String publicUrl = sb.Supabase.instance.client.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+
+      // Save user avatar URL to Supabase users table
+      await sb.Supabase.instance.client
+          .from('users')
+          .update({'avatar_url': publicUrl})
+          .eq('id', user.uid);
+
+      userAvatarUrl.value = publicUrl;
+
+      Get.back(); // close dialog
+      Get.snackbar(
+        'Profile Picture Updated',
+        'Successfully uploaded your new profile photo.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withOpacity(0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+      );
+    } catch (e) {
+      if (Get.isDialogOpen ?? false) Get.back(); // ensure loading closed
+      Get.snackbar(
+        'Upload Failed',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent.withOpacity(0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+      );
     }
   }
 
@@ -186,14 +265,14 @@ class SettingsController extends GetxController {
                            try {
                              final user = FirebaseAuth.instance.currentUser;
                              if (user != null) {
-                               await FirebaseFirestore.instance
-                                   .collection('users')
-                                   .doc(user.uid)
-                                   .update({
-                                     'firstName': newFirst,
-                                     'lastName': newLast,
-                                     'phone': newPhone,
-                                   });
+                                await sb.Supabase.instance.client
+                                    .from('users')
+                                    .update({
+                                      'first_name': newFirst,
+                                      'last_name': newLast,
+                                      'phone': newPhone,
+                                    })
+                                    .eq('id', user.uid);
 
                                userName.value = '$newFirst $newLast'.trim();
                                userPhone.value = newPhone;
@@ -264,7 +343,7 @@ class SettingsController extends GetxController {
       buttonColor: Colors.redAccent,
       onConfirm: () async {
         Get.back();
-        await FirebaseAuth.instance.signOut();
+        await AuthService.to.signOut();
         Get.delete<SettingsController>();
         Get.offAllNamed(Routes.LOGIN);
         Get.snackbar(

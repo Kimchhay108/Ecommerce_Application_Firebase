@@ -2,10 +2,12 @@ import 'package:get/get.dart';
 import '../../../data/models/category_model.dart';
 import '../../../data/models/product_model.dart';
 import '../../../data/models/cart_item_model.dart';
-import '../../../data/providers/laravel_api_provider.dart';
+import '../../../data/services/supabase_product_service.dart';
+import '../../../data/services/auth_service.dart';
+import 'package:flutter/material.dart';
 
 class HomeController extends GetxController {
-  final LaravelApiProvider _apiProvider = Get.put(LaravelApiProvider());
+  final IProductRepository _productRepository = SupabaseProductService.to.repository;
 
   final RxList<CategoryModel> categories = <CategoryModel>[].obs;
   final RxList<ProductModel> topSelling = <ProductModel>[].obs;
@@ -22,6 +24,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _checkUserBanStatus();
 
     cartItemCount.value = cartItems.fold(0, (sum, item) => sum + item.quantity);
     cartItems.listen((items) {
@@ -30,18 +33,42 @@ class HomeController extends GetxController {
     fetchData();
   }
 
+  Future<void> _checkUserBanStatus() async {
+    final user = AuthService.to.currentUser;
+    if (user != null) {
+      final isBanned = await AuthService.to.checkIfBanned(user.uid);
+      if (isBanned) {
+        await AuthService.to.signOut();
+        Get.offAllNamed('/login');
+        Get.dialog(
+          AlertDialog(
+            title: const Text('Account Banned', style: TextStyle(fontWeight: FontWeight.bold)),
+            content: const Text('Your account has been banned by the administrator.'),
+            actions: [
+              TextButton(
+                onPressed: () => Get.back(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+          barrierDismissible: false,
+        );
+      }
+    }
+  }
+
   Future<void> fetchData() async {
     try {
       isLoading.value = true;
-      final fetchedCategories = await _apiProvider.getCategories();
-      final fetchedTopSelling = await _apiProvider.getTopSellingProducts();
-      final fetchedNewIn = await _apiProvider.getNewInProducts();
+      final fetchedCategories = await _productRepository.getCategories();
+      final fetchedProducts = await _productRepository.getProducts();
 
       if (fetchedCategories.isNotEmpty) categories.assignAll(fetchedCategories);
-      if (fetchedTopSelling.isNotEmpty) topSelling.assignAll(fetchedTopSelling);
-      if (fetchedNewIn.isNotEmpty) newIn.assignAll(fetchedNewIn);
+      if (fetchedProducts.isNotEmpty) {
+        newIn.assignAll(fetchedProducts.take(8).toList());
+        topSelling.assignAll(fetchedProducts.take(8).toList());
+      }
     } catch (_) {
-
       _loadFallbackData();
     } finally {
       isLoading.value = false;

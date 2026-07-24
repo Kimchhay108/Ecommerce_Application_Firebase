@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../../../routes/app_pages.dart';
+import '../../../data/services/auth_service.dart';
 
 class OnboardingController extends GetxController {
   final selectedGender = 'Men'.obs;
@@ -34,14 +35,13 @@ class OnboardingController extends GetxController {
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
       if (uid != null) {
-
-        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        await sb.Supabase.instance.client.from('users').update({
           'gender': selectedGender.value,
-          'ageRange': selectedAgeRange.value,
-        });
+          'age_range': selectedAgeRange.value,
+        }).eq('id', uid);
       }
 
-      await FirebaseAuth.instance.signOut();
+      await AuthService.to.signOut();
 
       isLoading.value = false;
       Get.offAllNamed(Routes.LOGIN);
